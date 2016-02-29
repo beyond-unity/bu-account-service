@@ -1,0 +1,25 @@
+{
+    "autoload": {
+        "psr-4": {
+            "BU\\": "src/DVO/BU"
+        }
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/dvomedia/slim-rabbit-rest.git"
+        }
+    ],
+    "require": {
+        "slim/slim": "^3.0",
+        "monolog/monolog": "^1.13",
+        "dvomedia/slim-rabbit-rest": "dev-master",
+        "php-amqplib/php-amqplib": "v2.6.1",
+        "pavlakis/slim-cli" : "~1.0"
+    },
+    "require-dev": {
+    	"phpunit/phpunit": "5.2",
+        "squizlabs/php_codesniffer": "2.5.1",
+        "guzzlehttp/guzzle": "6.1.1"
+    }
+}
