@@ -9,8 +9,9 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $mamqp     = $this->getMock('\PhpAmqpLib\Connection\AMQPConnection', array(), array(), '', false);
         $mguzzle   = $this->getMock('\Guzzlehttp\Client', array(), array(), '', false);
         $msettings = array();
-        
+
         $obj = new \BU\Controller\AccountController($ml, $maf, $mamqp, $mguzzle, $msettings);
         $this->assertInstanceOf('\BU\Controller\AccountController', $obj);
     }
+
 }

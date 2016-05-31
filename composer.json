@@ -15,7 +15,8 @@
         "monolog/monolog": "^1.13",
         "dvomedia/slim-rabbit-rest": "dev-master",
         "php-amqplib/php-amqplib": "v2.6.1",
-        "pavlakis/slim-cli" : "~1.0"
+        "pavlakis/slim-cli" : "~1.0",
+        "mongodb/mongodb" : "^1.0.0"
     },
     "require-dev": {
     	"phpunit/phpunit": "5.2",

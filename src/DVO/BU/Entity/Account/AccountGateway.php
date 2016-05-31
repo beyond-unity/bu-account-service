@@ -3,6 +3,7 @@
 namespace BU\Entity\Account;
 
 use BU\Db;
+use \MongoDB\Model\BSONDocument;
 
 /**
  * AccountGateway
@@ -19,29 +20,45 @@ class AccountGateway
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($db)
     {
-        //$this->db = $db;
+        $this->db = $db->selectCollection('accounts');
     }
 
     /**
-     * Get the products
+     * Get the account
      *
      * @return array
      */
-    public function getAccounts(array $search = []): array
+    public function getAccount(array $search = []): array
     {
-        $accounts = $this->db->find('accounts', $search);
-        return $accounts;
+        $account = $this->db->findOne(
+            $search,
+            ['typeMap' => ['root' => 'array', 'document' => 'array', 'array' => 'array']]
+        );
+        if (true === empty($account)) {
+            return [];
+        }
+
+        return [$account];
     }
 
-    public function createAccount(Account $account)
+    public function insertAccount($account)
     {
-        $this->db->insert($account->json());
+        $current = $this->db->findOne(
+            [],
+            ["sort" => ["id" => -1], 'typeMap' => ['root' => 'array', 'document' => 'array', 'array' => 'array']]
+        );
+        $account->setId(++$current['id']);
+
+
+        $result = $this->db->insertOne($account->bsonSerialize());
+
+        return $result;
     }
 
-    public function updateAccount($id, Account $account)
+    public function updateAccount($account)
     {
-        $this->db->update($id, $account->json());
+        $this->db->replaceOne(['id' => $account->getid()], $account->bsonSerialize());
     }
 }

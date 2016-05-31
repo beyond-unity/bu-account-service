@@ -1,4 +1,4 @@
-FROM bobbydvo/centos-php7
+FROM bobbydvo/quint-api-dev
 
 MAINTAINER bobby@dvomedia.net
 

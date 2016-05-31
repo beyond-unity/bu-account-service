@@ -2,13 +2,15 @@
 
 namespace BU\Entity;
 
+use \MongoDB\BSON\Persistable;
+
 /**
  * Account class
  *
  * @package default
  * @author
  **/
-final class Account
+final class Account implements \MongoDB\BSON\Persistable
 {
     protected $data;
 
@@ -21,9 +23,12 @@ final class Account
     public function __construct($data = [])
     {
         $this->data = [
-            'id'    => null,
-            'email' => null,
-            'name'  => null
+            '_id'      => '',
+            'id'       => null,
+            'email'    => null,
+            'username' => null,
+            'password' => null,
+            'vcode'    => null,
         ];
 
         if (true === is_array($data)) {
@@ -36,6 +41,27 @@ final class Account
         }
     }
 
+    public function bsonSerialize()
+    {
+        foreach ($this->data as $key => $val) {
+            $tmp[$key] = $val;
+        }
+
+        unset($tmp['_id']);
+
+        return $tmp;
+    }
+
+    public function bsonUnserialize(array $data)
+    {
+        $this->set_id($data['_id']);
+        $this->setId($data['id']);
+        $this->setEmail($data['email']);
+        $this->setUsername($data['username']);
+        $this->setPassword($data['password']);
+        $this->setVcode($data['vcode']);
+    }
+
 
     /**
      * Return json data of object.
@@ -45,7 +71,21 @@ final class Account
      **/
     public function json(): string
     {
-        return json_encode($this->data);
+        $tmp = $this->data;
+        unset($tmp['_id']);
+
+        return json_encode($tmp);
+    }
+
+    /**
+     * SetId
+     *
+     * @return void
+     * @author
+     **/
+    public function set_id($id)
+    {
+        $this->data['_id'] = $id;
     }
 
     /**
@@ -56,22 +96,11 @@ final class Account
      **/
     public function setId(int $id)
     {
-        throw new \Exception('Cannot set the ID!');
+        $this->data['id'] = $id;
     }
 
     /**
-     * SetName
-     *
-     * @return void
-     * @author
-     **/
-    public function setName(string $name)
-    {
-        $this->data['name'] = $name;
-    }
-
-    /**
-     * SetEmail
+     * Set Email
      *
      * @return void
      * @author
@@ -80,6 +109,41 @@ final class Account
     {
         $this->data['email'] = $email;
     }
+
+    /**
+     * Set Username
+     *
+     * @return void
+     * @author
+     **/
+    public function setUsername(string $username)
+    {
+        $this->data['username'] = $username;
+    }
+
+    /**
+     * Set password
+     *
+     * @return void
+     * @author
+     **/
+    public function setPassword(string $password)
+    {
+        $this->data['password'] = $password;
+    }
+
+
+    /**
+     * Set Vcode
+     *
+     * @return void
+     * @author
+     **/
+    public function setVcode(string $vcode)
+    {
+        $this->data['vcode'] = $vcode;
+    }
+
 
     /**
      * getId
@@ -93,18 +157,7 @@ final class Account
     }
 
     /**
-     * getName
-     *
-     * @return int
-     * @author
-     **/
-    public function getName(): string
-    {
-        return $this->data['name'];
-    }
-
-    /**
-     * getEmail
+     * get email
      *
      * @return int
      * @author
@@ -112,5 +165,38 @@ final class Account
     public function getEmail(): string
     {
         return $this->data['email'];
+    }
+
+    /**
+     * get username
+     *
+     * @return int
+     * @author
+     **/
+    public function getUsername(): string
+    {
+        return $this->data['username'];
+    }
+
+    /**
+     * get password
+     *
+     * @return int
+     * @author
+     **/
+    public function getPassword(): string
+    {
+        return $this->data['password'];
+    }
+
+    /**
+     * get vcode
+     *
+     * @return int
+     * @author
+     **/
+    public function getVcode(): string
+    {
+        return $this->data['vcode'];
     }
 } // END final class Account
