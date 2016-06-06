@@ -45,7 +45,7 @@ class AccountFactory
      * @return Account
      * @author
      **/
-    public function create($data = []): Account
+    public function create($data = [])
     {
         return new \BU\Entity\Account($data);
     }

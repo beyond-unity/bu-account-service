@@ -29,6 +29,7 @@ final class Account implements \MongoDB\BSON\Persistable
             'username' => null,
             'password' => null,
             'vcode'    => null,
+            'verified' => false
         ];
 
         if (true === is_array($data)) {
@@ -36,6 +37,11 @@ final class Account implements \MongoDB\BSON\Persistable
                 if (false === array_key_exists($key, $this->data)) {
                     throw new \Exception('Key ' . $key . ' does not exist in ' . get_called_class());
                 }
+
+                if ('password' === $key) {
+                    $value = password_hash($value, PASSWORD_BCRYPT, ['cost' => 12]);
+                }
+
                 $this->data[$key] = $value;
             }
         }

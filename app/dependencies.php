@@ -5,7 +5,7 @@ $container = $app->getContainer();
 // -----------------------------------------------------------------------------
 // Service providers
 // -----------------------------------------------------------------------------
-
+/*
 $container['amqp'] = function($c) {
     $settings = $c->get('settings');
     return new \PhpAmqpLib\Connection\AMQPConnection(
@@ -14,6 +14,16 @@ $container['amqp'] = function($c) {
         $settings['account.service.amqp']['user'],
         $settings['account.service.amqp']['pass']
     );
+};
+*/
+
+
+$container['mongo'] = function ($c) {
+    $settings = $c->get('settings');
+    $mongo    = new \MongoDB\Driver\Manager($settings['mongohost']);
+    $db       = new \MongoDB\Database($mongo, $settings['mongodb']);
+
+    return $db;
 };
 
 
@@ -42,8 +52,7 @@ $container['guzzle.client'] = function($c) {
 // -----------------------------------------------------------------------------
 
 $container['account.gateway'] = function ($c) {
-    // pass our DB of choice here when we have decided. Mongo? :)
-    return new BU\Entity\Account\AccountGateway();
+    return new BU\Entity\Account\AccountGateway($c->get('mongo'));
 };
 
 $container['account.factory'] = function ($c) {
@@ -58,7 +67,6 @@ $container['BU\Controller\AccountController'] = function ($c) {
     return new BU\Controller\AccountController(
         $c->get('logger'),
         $c->get('account.factory'),
-        $c->get('amqp'), 
         $c->get('guzzle.client'),
         $c->get('settings')
     );
