@@ -7,8 +7,9 @@ $app->post('/account', 'BU\Controller\AccountController:indexAction');
 
 $app->post('/createaccount', 'BU\Controller\AccountController:createAccountAction');
 $app->post('/token', 'BU\Controller\AccountController:tokenAction');
-$app->post('/ping', 'BU\Controller\AccountController:indexAction');
+$app->post('/verify', 'BU\Controller\AccountController:verifyAction');
 
+$app->post('/ping', 'BU\Controller\AccountController:indexAction');
 $app->get('/rpc', 'BU\Controller\AccountController:rpcAction');
 
 $app->get('/rest', 'BU\Controller\AccountController:restAction');

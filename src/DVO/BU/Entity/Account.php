@@ -150,6 +150,16 @@ final class Account implements \MongoDB\BSON\Persistable
         $this->data['vcode'] = $vcode;
     }
 
+    /**
+     * Set Verified
+     *
+     * @return void
+     * @author
+     **/
+    public function setVerified()
+    {
+        $this->data['verified'] = true;
+    }
 
     /**
      * getId
@@ -209,5 +219,10 @@ final class Account implements \MongoDB\BSON\Persistable
     public function passwordValid($password): bool
     {
         return password_verify($password, $this->getPassword());
+    }
+
+    public function vcodeValid($vcode): bool
+    {
+        return ($this->getVcode() === $vcode);
     }
 } // END final class Account

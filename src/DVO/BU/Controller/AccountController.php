@@ -48,15 +48,15 @@ final class AccountController
      */
     public function indexAction(Request $request, Response $response, $args): Response
     {
+
         $data = [
-            'error' => 'You must provide a method'
+            'error' => 'You must provide a method',
+            'token' => $request->getAttribute('token')
         ];
 
-        $body = json_encode($data);
-        $response->getBody()->write($body);
-        $response = $response->withHeader('Content-Type', 'application/json');
-
-        return $response;
+        return $response->withStatus(401)
+				        ->withHeader("Content-Type", "application/json")
+				        ->write(json_encode($data, JSON_UNESCAPED_SLASHES));
     }
 
     /**
@@ -70,16 +70,17 @@ final class AccountController
     public function createAccountAction(Request $request, Response $response, $args): Response
     {
         $data = $request->getParsedBody();
+
         if (true === empty($data['username'])) {
-            $data['errors'] = 'You must supply a username';
+            $data['errors'][] = 'You must supply a username';
         }
 
         if (true === empty($data['email'])) {
-            $data['errors'] = 'You must supply a email';
+            $data['errors'][] = 'You must supply an email';
         }
 
         if (true === empty($data['password'])) {
-            $data['errors'] = 'You must supply a password';
+            $data['errors'][] = 'You must supply a password';
         }
 
         if (true == empty($data['errors'])) {
@@ -90,11 +91,9 @@ final class AccountController
             $data          = $account->bsonSerialize();
         }
 
-        $body = json_encode($data);
-        $response->getBody()->write($body);
-        $response = $response->withHeader('Content-Type', 'application/json');
-
-        return $response;
+        return $response->withStatus(200)
+				        ->withHeader("Content-Type", "application/json")
+				        ->write(json_encode($data, JSON_UNESCAPED_SLASHES));
     }
 
     public function tokenAction(Request $request, Response $response, $args): Response
@@ -113,8 +112,8 @@ final class AccountController
         if (false === $account->passwordValid($data['password'])) {
             $data['errors'] = 'Invalid username or password';
             return $response->withStatus(401)
-            ->withHeader("Content-Type", "application/json")
-            ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+                            ->withHeader("Content-Type", "application/json")
+                            ->write(json_encode($data, JSON_UNESCAPED_SLASHES));
         }
 
         $now    = new \DateTime();
@@ -135,35 +134,35 @@ final class AccountController
         $data["token"] = $token;
         return $response->withStatus(201)
             ->withHeader("Content-Type", "application/json")
-            ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+            ->write(json_encode($data, JSON_UNESCAPED_SLASHES));
     }
 
-    public function rpcAction(Request $request, Response $response, $args): Response
+    public function verifyAction(Request $request, Response $response, $args): Response
     {
-        $rpc = new \DVO\SlimRabbitRest\RpcClient($this->amqp);
-        $resp = $rpc->get('/');
-        $response->getBody()->write($resp);
-        $response = $response->withHeader('Content-Type', 'application/json');
+        $data = $request->getParsedBody();
 
-        return $response;
-    }
+        if (true === empty($data['vcode'])) {
+            $data['errors'][] = 'You must supply a verification code';
+        }
 
-    /**
-     * Handles the HTTP GET.
-     *
-     * @param Request     $request The request.
-     * @param Application $app     The app.
-     *
-     */
-    public function restAction(Request $request, Response $response, $args): Response
-    {
+        $token = $request->getAttribute('token');
 
-        $response = $this->guzzle->get(
-            $this->settings['account.service.rest']['url'] . '',
-            ['query' => []]
-        );
+        $account = $this->af->getAccount(['username' => $token->sub]);
 
-        return $response;
+        if (true === empty($account) || false === $account->vcodeValid($data['vcode'])) {
+            $data['errors'][] = 'Invalid username or validation code';
+            return $response->withStatus(401)
+				            ->withHeader("Content-Type", "application/json")
+				            ->write(json_encode($data, JSON_UNESCAPED_SLASHES));
+        }
 
+        $account->setVerified();
+        $this->af->getGateway()->updateAccount($account);
+
+        $data = $account->bsonSerialize();
+
+        return $response->withStatus(200)
+				        ->withHeader("Content-Type", "application/json")
+				        ->write(json_encode($data, JSON_UNESCAPED_SLASHES));
     }
 }

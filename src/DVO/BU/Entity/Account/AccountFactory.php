@@ -58,19 +58,17 @@ class AccountFactory
      */
     public function getAccount(array $search = []): \BU\Entity\Account
     {
-        if (true === empty($search)) {
-            $account = $this->create();
-        } else {
-            $account = $this->gateway->getAccount($search);
+
+        if (false === empty($search) &&
+        	false === empty($this->gateway->getAccount($search))) {
+        	$account = $this->create();
+			$account->bsonUnserialize($this->gateway->getAccount($search));
         }
 
         if (true === empty($account)) {
             throw new \Exception('Cannot find account');
         }
 
-        $naccount = $this->create();
-        $naccount->bsonUnserialize($account[0]);
-
-        return $naccount;
+        return $account;
     }
 } // END final class AccountFactory

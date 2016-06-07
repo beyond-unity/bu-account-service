@@ -62,11 +62,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'vcode' => '123123',
         ]);
 
-        // can't compare json string due to password_hash
+        // can't compare json string due to password_hash (should mock it really..)
         $this->assertEquals('braintopmark', json_decode($obj->json(), true)['username']);
         $this->assertEquals('bobby@dvomedia.net', json_decode($obj->json(), true)['email']);
         $this->assertEquals('123123', json_decode($obj->json(), true)['vcode']);
-        $this->assertEquals(true, password_verify('asdfasdf', json_decode($obj->json(), true)['password']));
+        $this->assertEquals(true, $obj->passwordValid('asdfasdf'));
     }
 
     public function testBsonSerialize()
@@ -82,8 +82,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('braintopmark', $obj->bsonSerialize()['username']);
         $this->assertEquals('bobby@dvomedia.net', $obj->bsonSerialize()['email']);
         $this->assertEquals('123123', $obj->bsonSerialize()['vcode']);
-
-
     }
 
     public function testBsonUnserialize()

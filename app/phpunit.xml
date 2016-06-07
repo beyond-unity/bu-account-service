@@ -27,7 +27,7 @@
         <whitelist addUncoveredFilesFromWhitelist="true">
         <directory suffix=".php">../src</directory>
         <exclude>
-            <file></file>
+            <file>../src/DVO/BU/Entity/Account/AccountGateway.php</file>
         </exclude>
         </whitelist>
     </filter>

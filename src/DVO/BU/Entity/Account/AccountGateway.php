@@ -40,7 +40,7 @@ class AccountGateway
             return [];
         }
 
-        return [$account];
+        return $account;
     }
 
     public function insertAccount($account)
