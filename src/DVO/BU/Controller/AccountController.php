@@ -11,18 +11,18 @@ use BU\Helper\AlphaRand;
 use PhpAmqpLib\Connection\AMQPConnection;
 use GuzzleHttp\Client;
 
+use Firebase\JWT\JWT;
+
 final class AccountController
 {
     /**
-     * View & Logger
+     * Logger
      */
-    protected $view;
     protected $logger;
 
     /**
      * Handles the HTTP GET.
      *
-     * @param Twig            $view   The view ()
      * @param LoggerInterface $logger The app.
      *
      */
@@ -95,6 +95,47 @@ final class AccountController
         $response = $response->withHeader('Content-Type', 'application/json');
 
         return $response;
+    }
+
+    public function tokenAction(Request $request, Response $response, $args): Response
+    {
+        $data = $request->getParsedBody();
+        if (true === empty($data['username'])) {
+            $data['errors'] = 'You must supply a username';
+        }
+
+        if (true === empty($data['password'])) {
+            $data['errors'] = 'You must supply a password';
+        }
+
+        $account = $this->af->getAccount(['username' => $data['username']]);
+
+        if (false === $account->passwordValid($data['password'])) {
+            $data['errors'] = 'Invalid username or password';
+            return $response->withStatus(401)
+            ->withHeader("Content-Type", "application/json")
+            ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        }
+
+        $now    = new \DateTime();
+        $future = new \DateTime("now +2 hours");
+        $server = $request->getServerParams();
+        $jti    = base64_encode(random_bytes(16));
+        $scopes = [];
+        $payload = [
+            "iat" => $now->getTimeStamp(),
+            "exp" => $future->getTimeStamp(),
+            "jti" => $jti,
+            "sub" => $account->getUsername(),
+            "scope" => $scopes
+        ];
+        $secret = 'mysecret';
+        $token = JWT::encode($payload, $secret, "HS256");
+        $data["status"] = "ok";
+        $data["token"] = $token;
+        return $response->withStatus(201)
+            ->withHeader("Content-Type", "application/json")
+            ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
 
     public function rpcAction(Request $request, Response $response, $args): Response

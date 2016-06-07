@@ -16,7 +16,9 @@
         "dvomedia/slim-rabbit-rest": "dev-master",
         "php-amqplib/php-amqplib": "v2.6.1",
         "pavlakis/slim-cli" : "~1.0",
-        "mongodb/mongodb" : "^1.0.0"
+        "mongodb/mongodb" : "^1.0.0",
+        "firebase/php-jwt" : "3.0.0",
+        "tuupola/slim-jwt-auth": "^2.0"
     },
     "require-dev": {
     	"phpunit/phpunit": "5.2",

@@ -5,8 +5,12 @@
 $app->get('/', 'BU\Controller\AccountController:indexAction');
 $app->post('/account', 'BU\Controller\AccountController:indexAction');
 
-$app->post('/createAccount', 'BU\Controller\AccountController:createAccountAction');
+$app->post('/createaccount', 'BU\Controller\AccountController:createAccountAction');
+$app->post('/token', 'BU\Controller\AccountController:tokenAction');
+$app->post('/ping', 'BU\Controller\AccountController:indexAction');
+
 $app->get('/rpc', 'BU\Controller\AccountController:rpcAction');
+
 $app->get('/rest', 'BU\Controller\AccountController:restAction');
 $app->get('/getAccount', 'BU\Controller\AccountController:indexAction');
 $app->get('/deleteAccount', 'BU\Controller\AccountController:indexAction');

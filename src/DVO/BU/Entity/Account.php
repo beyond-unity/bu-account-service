@@ -205,4 +205,9 @@ final class Account implements \MongoDB\BSON\Persistable
     {
         return $this->data['vcode'];
     }
+
+    public function passwordValid($password): bool
+    {
+        return password_verify($password, $this->getPassword());
+    }
 } // END final class Account

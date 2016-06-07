@@ -50,8 +50,6 @@ class AccountGateway
             ["sort" => ["id" => -1], 'typeMap' => ['root' => 'array', 'document' => 'array', 'array' => 'array']]
         );
         $account->setId(++$current['id']);
-
-
         $result = $this->db->insertOne($account->bsonSerialize());
 
         return $result;
