@@ -7,13 +7,13 @@
     "repositories": [
         {
             "type": "git",
-            "url": "https://github.com/dvomedia/slim-rabbit-rest.git"
+            "url": "git@github.com:bobbydeveaux/slim-rabbit-rest.git"
         }
     ],
     "require": {
         "slim/slim": "^3.0",
         "monolog/monolog": "^1.13",
-        "dvomedia/slim-rabbit-rest": "dev-master",
+        "bobbydeveaux/slim-rabbit-rest": "dev-master",
         "php-amqplib/php-amqplib": "v2.6.1",
         "pavlakis/slim-cli" : "~1.0",
         "mongodb/mongodb" : "^1.0.0",
