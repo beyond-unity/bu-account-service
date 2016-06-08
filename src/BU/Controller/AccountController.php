@@ -120,13 +120,28 @@ final class AccountController
         $future = new \DateTime("now +2 hours");
         $server = $request->getServerParams();
         $jti    = base64_encode(random_bytes(16));
-        $scopes = [];
+        $scopes = [
+        	'accounts.verify'
+        ];
+        if (true === in_array('admin',$account->getRoles())) {
+        	$scopes += [
+        		'planets.createplanet',
+        		'planets.getresources',
+        		'planets.asteroidscan'
+        	];
+        }
         $payload = [
             "iat" => $now->getTimeStamp(),
             "exp" => $future->getTimeStamp(),
             "jti" => $jti,
             "sub" => $account->getUsername(),
-            "scope" => $scopes
+            "scope" => $scopes,
+            "data" => [
+            	'roles' => $account->getRoles(),
+            	'aid' => $account->getId(),
+            	'email' => $account->getEmail(),
+            	'username' => $account->getUsername()
+            ]
         ];
         $secret = 'mysecret';
         $token = JWT::encode($payload, $secret, "HS256");
@@ -139,15 +154,23 @@ final class AccountController
 
     public function verifyAction(Request $request, Response $response, $args): Response
     {
+    	// need a helper class or sth for this,
+    	// as it's going to be repeated a lot..
+    	$token   = $request->getAttribute('token');
+    	$isAdmin = in_array('admin', $token->data['roles']);
+
         $data = $request->getParsedBody();
 
         if (true === empty($data['vcode'])) {
             $data['errors'][] = 'You must supply a verification code';
         }
 
-        $token = $request->getAttribute('token');
-
-        $account = $this->af->getAccount(['username' => $token->sub]);
+        // admins can verifiy other accounts ID
+        if (false === empty($data['account_id']) && true === $isAdmin) {
+        	$account = $this->af->getAccount(['id' => $data['account_id']]);
+        } else {
+        	$account = $this->af->getAccount(['username' => $token->sub]);
+        }
 
         if (true === empty($account) || false === $account->vcodeValid($data['vcode'])) {
             $data['errors'][] = 'Invalid username or validation code';

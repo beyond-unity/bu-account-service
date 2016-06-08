@@ -29,6 +29,7 @@ final class Account implements \MongoDB\BSON\Persistable
             'username' => null,
             'password' => null,
             'vcode'    => null,
+            'roles'    => [],
             'verified' => false
         ];
 
@@ -151,6 +152,17 @@ final class Account implements \MongoDB\BSON\Persistable
     }
 
     /**
+     * Set Vcode
+     *
+     * @return void
+     * @author
+     **/
+    public function setRoles(array $roles)
+    {
+        $this->data['roles'] = $roles;
+    }
+
+    /**
      * Set Verified
      *
      * @return void
@@ -214,6 +226,17 @@ final class Account implements \MongoDB\BSON\Persistable
     public function getVcode(): string
     {
         return $this->data['vcode'];
+    }
+
+    /**
+     * get roles
+     *
+     * @return array
+     * @author
+     **/
+    public function getRoles(): array
+    {
+        return $this->data['roles'];
     }
 
     public function passwordValid($password): bool

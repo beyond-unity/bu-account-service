@@ -1,7 +1,7 @@
 {
     "autoload": {
         "psr-4": {
-            "BU\\": "src/DVO/BU"
+            "BU\\": "src/BU"
         }
     },
     "repositories": [
