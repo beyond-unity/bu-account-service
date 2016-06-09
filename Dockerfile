@@ -1,11 +1,15 @@
-FROM bobbydvo/quint-api-dev
+FROM bobbydvo/packer-lemp-dev:latest
+MAINTAINER me@bobbyjason.co.uk
 
-MAINTAINER bobby@dvomedia.net
+RUN echo '' >> /etc/php-fpm.d/www.conf
+RUN echo 'env[AWS_ENVIRONMENT]  = $AWS_ENVIRONMENT' >> /etc/php-fpm.d/www.conf
 
-ADD ./config/docker/development/default.conf /etc/nginx/conf.d/default.conf
-ADD ./config/docker/development/10-opcache.ini /etc/php.d/10-opcache.ini
-ADD ./config/docker/development/php.ini /etc/php.ini
-ADD ./config/docker/development/nginx.conf /etc/nginx/nginx.conf
-ADD ./config/docker/development/gzip.conf /etc/nginx/conf.d/gzip.conf
+# Copy the code onto the container
+COPY . /srv
+WORKDIR "/srv"
+RUN composer install
 
-EXPOSE 80 443 8080
+# http, https, mongo, redis
+EXPOSE 80 443 3306 6379
+
+CMD ["/usr/bin/supervisord","-n","-c","/etc/supervisord.conf"]

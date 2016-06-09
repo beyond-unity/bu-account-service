@@ -1,0 +1,40 @@
+# language setting
+language: php
+
+# specifying runtime
+php:
+   '7.0'
+
+build:
+  # commands in this section run on your build machine and not inside your CI container.
+  pre_ci:
+    - docker build  --rm=true -t bobbydvo/bu-accounts-service:tip .
+    - docker build  --rm=true -t bobbydvo/bu-accounts-service:$BRANCH.$BUILD_NUMBER .
+    - docker images
+
+  pre_ci_boot:
+    image_name: bobbydvo/bu-accounts-service
+    image_tag: tip
+    pull: false
+    options: "-e HOME=/root"
+
+  # commands in this section run inside your CI container. In addition, any commands such as ls, in this section can be used to skip default processing for CI.
+  ci:
+    # Here you'd place anything you want to test. For PHP apps, maybe Phpunit?
+    - ./vendor/bin/phpunit src
+
+  # Everything all good? Let's push this to docker.
+  # commands in this section run on your build machine and not inside your CI container.
+  push:
+    - docker push bobbydvo/bu-accounts-service:tip
+    - docker push bobbydvo/bu-accounts-service:$BRANCH.$BUILD_NUMBER
+
+integrations:
+  ## Our Docker Hub Integration in Shippable
+  hub:
+    - integrationName: "DockerHub"
+      type: docker
+      agent_only: true
+      branches:
+        only:
+          - master
