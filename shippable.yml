@@ -21,6 +21,8 @@ build:
   # commands in this section run inside your CI container. In addition, any commands such as ls, in this section can be used to skip default processing for CI.
   ci:
     # Here you'd place anything you want to test. For PHP apps, maybe Phpunit?
+    - cd /srv
+    - ls -la
     - ./vendor/bin/phpunit src
 
   # Everything all good? Let's push this to docker.
