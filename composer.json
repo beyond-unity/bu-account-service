@@ -4,16 +4,9 @@
             "BU\\": "src/BU"
         }
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "git@github.com:bobbydeveaux/slim-rabbit-rest.git"
-        }
-    ],
     "require": {
         "slim/slim": "^3.0",
         "monolog/monolog": "^1.13",
-        "bobbydeveaux/slim-rabbit-rest": "dev-master",
         "php-amqplib/php-amqplib": "v2.6.1",
         "pavlakis/slim-cli" : "~1.0",
         "mongodb/mongodb" : "^1.0.0",
