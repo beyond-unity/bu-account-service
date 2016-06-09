@@ -22,8 +22,9 @@ build:
   ci:
     # Here you'd place anything you want to test. For PHP apps, maybe Phpunit?
     - cd /srv
-    - ls -la
-    - ./vendor/bin/phpunit src
+    - mkdir -p shippable/testresults
+    - mkdir -p shippable/codecoverage
+    - ./vendor/bin/phpunit -c app/phpunit.xml
 
   # Everything all good? Let's push this to docker.
   # commands in this section run on your build machine and not inside your CI container.
